@@ -35,7 +35,11 @@ from src.data import SHARIAH_LABELS, TICKERS
 from src.train import CHECKPOINTS_DIR, DATASET_PATH, FEATURE_COLS, OUTPUTS_DIR, SPLIT, load_data
 from src.evaluate import RESULTS_PATH, load_model, load_windows, reconstruct_test_metadata
 from src.model import mc_dropout_predict
-from src.sentiment import live_sentiment, load_finbert
+try:
+    from src.sentiment import live_sentiment, load_finbert
+    _SENTIMENT_AVAILABLE = True
+except Exception:
+    _SENTIMENT_AVAILABLE = False
 
 # How much recent history to pull for a live refresh (enough bars to build one
 # window after dropping the first NaN log-return).
@@ -387,13 +391,20 @@ def live_forecast_cached(ticker: str) -> dict:
 
 @st.cache_resource(show_spinner=False)
 def get_finbert():
-    """Load FinBERT once per session (cached so the gauge is fast after first use)."""
-    return load_finbert()
+    """Load FinBERT once per session. Returns None if transformers unavailable."""
+    if not _SENTIMENT_AVAILABLE:
+        return None
+    try:
+        return load_finbert()
+    except Exception:
+        return None
 
 
 @st.cache_data(ttl=1800, show_spinner="Fetching live news…")
 def live_sentiment_cached(ticker: str) -> dict:
     """Recent-headline FinBERT vs VADER sentiment for a ticker (cached ~30 min)."""
+    if not _SENTIMENT_AVAILABLE:
+        raise RuntimeError("sentiment module unavailable")
     return live_sentiment(ticker, finbert=get_finbert())
 
 

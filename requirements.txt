@@ -1,43 +1,37 @@
-# Quantis dependencies — pinned for reproducibility.
+# Quantis dependencies
 #
-# Tested with Python 3.11. Set up a clean, isolated environment so a grader can
-# reproduce the exact results:
-#
+# Local setup (Windows):
 #   python -m venv .venv
-#   .venv\Scripts\activate        (Windows)   |   source .venv/bin/activate (macOS/Linux)
+#   .venv\Scripts\activate
 #   pip install -r requirements.txt
 #
-# Then run the pipeline:
-#   python src/data.py            # download + build dataset
-#   python -m src.train           # train LSTM/GRU, baselines, experiments
-#   python -m src.evaluate        # metrics, backtest, plots
-#   python -m src.report_plots    # extra report figures
-#   streamlit run src/app.py      # live demo
+# Streamlit Cloud: install happens automatically from this file.
 #
-# Optional (news sentiment side-experiment):
-#   python -m src.sentiment fetch        # pull headlines (FNSPID, Hugging Face)
-#   python -m src.sentiment score        # FinBERT + VADER daily scores
-#   python -m src.sentiment_experiment   # with-vs-without sentiment
-#   python -m src.sentiment live-compare # live FinBERT-vs-VADER (needs NEWSAPI_KEY in .env)
-#   python -m src.robustness             # multi-seed LSTM vs GRU
+# Run the pipeline:
+#   python src/data.py
+#   python -m src.train
+#   python -m src.evaluate
+#   streamlit run src/app.py
 
 # --- core data / modelling ---
-yfinance==1.4.1
-pandas==2.2.3
-numpy==1.26.4
-torch==2.12.0          # tested on the CPU build (2.12.0+cpu); a CPU install is sufficient
-scikit-learn==1.8.0
+yfinance>=0.2.0
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.2.0
+
+# PyTorch — CPU build (sufficient for inference; no GPU needed)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0
 
 # --- evaluation / plots ---
-matplotlib==3.10.8
-scipy==1.16.3
+matplotlib>=3.7.0
+scipy>=1.10.0
 
 # --- demo app ---
-streamlit==1.58.0
-plotly==6.8.0
+streamlit>=1.30.0
+plotly>=5.0.0
 
-# --- news sentiment side-experiment ---
-transformers==5.12.1     # FinBERT scoring
-vaderSentiment==3.3.2    # VADER baseline scoring
-requests==2.32.3         # NewsAPI calls
-# (huggingface_hub is pulled in by transformers)
+# --- news sentiment (app degrades gracefully if these fail to load) ---
+transformers>=4.30.0
+vaderSentiment>=3.3.2
+requests>=2.28.0
