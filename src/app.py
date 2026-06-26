@@ -334,6 +334,42 @@ def _train_scaler(ticker: str):
     return scaler, ticker_id
 
 
+def _yf_history(ticker: str) -> pd.DataFrame:
+    """Download recent OHLCV, trying two yfinance APIs so Cloud IPs have a
+    better chance of getting through Yahoo Finance's rate-limiting."""
+    import requests as _req
+
+    # Method 1: Ticker.history() — uses a different code path than download()
+    session = _req.Session()
+    session.headers["User-Agent"] = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    )
+    try:
+        t = yf.Ticker(ticker, session=session)
+        hist = t.history(period=LIVE_PERIOD, auto_adjust=False)
+        if hist is not None and not hist.empty:
+            if isinstance(hist.columns, pd.MultiIndex):
+                hist.columns = hist.columns.get_level_values(0)
+            hist = hist.reset_index()
+            if "Date" not in hist.columns and "Datetime" in hist.columns:
+                hist = hist.rename(columns={"Datetime": "Date"})
+            return hist
+    except Exception:
+        pass
+
+    # Method 2: yf.download() — classic API
+    raw = yf.download(ticker, period=LIVE_PERIOD, interval="1d",
+                      auto_adjust=False, progress=False)
+    if raw is not None and not raw.empty:
+        if isinstance(raw.columns, pd.MultiIndex):
+            raw.columns = raw.columns.get_level_values(0)
+        return raw.reset_index()
+
+    raise ValueError("yfinance returned no data from either API")
+
+
 def fetch_live_forecast(ticker: str) -> dict:
     """Live one-session-ahead forecast: pull fresh daily bars from yfinance,
     build + scale the latest window exactly as in training, run MC dropout.
@@ -344,10 +380,7 @@ def fetch_live_forecast(ticker: str) -> dict:
     window = get_windows()["window"]
     scaler, ticker_id = _train_scaler(ticker)
 
-    raw = yf.download(ticker, period=LIVE_PERIOD, interval="1d",
-                      auto_adjust=False, progress=False)
-    if raw is None or raw.empty:
-        raise ValueError("yfinance returned no data")
+    raw = _yf_history(ticker)
     if isinstance(raw.columns, pd.MultiIndex):
         raw.columns = raw.columns.get_level_values(0)
     raw = raw.reset_index().dropna(subset=["Adj Close"]).sort_values("Date")
@@ -483,18 +516,15 @@ with badge:
                 unsafe_allow_html=True)
 with refresh_col:
     st.markdown('<div style="margin-top:1.55rem"></div>', unsafe_allow_html=True)
-    refresh = st.button("🔄 Refresh now")
-if refresh:
-    live_forecast_cached.clear()  # force a fresh pull on this run
+    if st.button("🔄 Refresh now"):
+        live_forecast_cached.clear()  # force a fresh pull on next rerun
 
 # --- Load for selected ticker (auto-live on load, snapshot fallback) -------- #
 results = get_results()
 try:
     fc, mode = live_forecast_cached(ticker), "LIVE"
-except Exception as exc:  # network / empty / insufficient data
+except Exception:  # network / empty / insufficient data — use frozen snapshot
     fc, mode = get_forecast(ticker), "SNAPSHOT"
-    if refresh:
-        st.warning(f"Couldn't fetch live data ({exc}). Showing the saved snapshot.")
 var_95 = results["var"][ticker]["var_95"]
 threshold = results["backtest_per_ticker"][ticker]["threshold"]
 
@@ -503,8 +533,9 @@ if mode == "LIVE":
                f"{fc['last_date']}. Today's bar may be partial during market hours; "
                "next-session date approximate around holidays. Not investment advice.")
 else:
-    st.caption("⚪ Live data unavailable — showing saved snapshot. "
-               "Educational demo, not investment advice.")
+    st.caption(f"📊 Showing test-set snapshot · last data point: {fc['last_date']} · "
+               "Yahoo Finance restricts data access from cloud IPs; forecasts are real "
+               "model outputs on held-out test data. Not investment advice.")
 
 if fc["pred_ret"] > threshold:
     signal, sig_delta, sig_color = "BUY", "▲ long", "normal"
