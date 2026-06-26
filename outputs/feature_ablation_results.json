@@ -1,0 +1,44 @@
+{
+  "indicators": [
+    "rsi14",
+    "sma_ratio",
+    "roll_vol20",
+    "mom10"
+  ],
+  "seeds": [
+    42,
+    0,
+    1,
+    2,
+    3
+  ],
+  "config": {
+    "window": 10,
+    "hidden_size": 128,
+    "embedding_dim": 8,
+    "dropout": 0.3,
+    "lr": 0.001,
+    "epochs": 30,
+    "batch_size": 64,
+    "clip_norm": 0.1
+  },
+  "aggregate": {
+    "baseline": {
+      "rmse_mean": 0.021406190999910986,
+      "rmse_std": 6.564578975584644e-05,
+      "dir_mean": 0.5083848797250858,
+      "dir_std": 0.011202116651974396
+    },
+    "+ indicators": {
+      "rmse_mean": 0.0214032841292175,
+      "rmse_std": 4.018702932013881e-05,
+      "dir_mean": 0.5040549828178694,
+      "dir_std": 0.011499249203925841
+    }
+  },
+  "diebold_mariano_vs_baseline": {
+    "dm_stat": 2.3473055500059172,
+    "p_value": 0.018976387061889533,
+    "significant_5pct": true
+  }
+}

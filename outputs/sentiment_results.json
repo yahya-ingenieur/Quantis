@@ -1,0 +1,60 @@
+{
+  "tickers": [
+    "AAPL",
+    "AMZN",
+    "MSFT",
+    "TSLA",
+    "XOM"
+  ],
+  "n_tickers": 5,
+  "window": 10,
+  "n_rows": 5440,
+  "seeds": [
+    42,
+    0,
+    1,
+    2,
+    3
+  ],
+  "config": {
+    "hidden_size": 64,
+    "embedding_dim": 8,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "epochs": 50,
+    "batch_size": 64,
+    "clip_norm": 0.1
+  },
+  "aggregate": {
+    "baseline": {
+      "rmse_mean": 0.019328579127918976,
+      "rmse_std": 0.00010966548835390674,
+      "dir_mean": 0.4797913950456324,
+      "dir_std": 0.01669654299200221
+    },
+    "+ VADER": {
+      "rmse_mean": 0.019491799046783925,
+      "rmse_std": 0.00017017167417293153,
+      "dir_mean": 0.523076923076923,
+      "dir_std": 0.024797900240873506
+    },
+    "+ FinBERT": {
+      "rmse_mean": 0.01951263399214454,
+      "rmse_std": 5.2955024551208245e-05,
+      "dir_mean": 0.4891786179921773,
+      "dir_std": 0.0075303932611179595
+    }
+  },
+  "diebold_mariano_vs_baseline": {
+    "+ VADER": {
+      "dm_stat": -1.2987135330796955,
+      "p_value": 0.19443155215600139,
+      "significant_5pct": false
+    },
+    "+ FinBERT": {
+      "dm_stat": -1.7975764756031365,
+      "p_value": 0.07263634078569403,
+      "significant_5pct": false
+    }
+  }
+}

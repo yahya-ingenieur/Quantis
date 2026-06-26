@@ -1,0 +1,31 @@
+# Streamlit theme — premium dark "fintech terminal" look for the Quantis demo.
+#
+# Uses modern Streamlit theming (>=1.50): custom web fonts, global corner radius,
+# element borders, a cohesive chart palette, and a separate sidebar sub-theme.
+# Theme only; no app logic here. (Custom fonts require a server restart to apply.)
+[theme]
+base = "dark"
+primaryColor = "#2DD4A8"                # teal-emerald accent
+backgroundColor = "#0B0F14"             # near-black, slightly cool
+secondaryBackgroundColor = "#141B24"    # card / widget surface
+textColor = "#E8EDF2"
+linkColor = "#2DD4A8"
+linkUnderline = false
+codeBackgroundColor = "#11181F"
+borderColor = "#232E3A"
+dataframeBorderColor = "#232E3A"
+baseRadius = "0.75rem"                  # rounded corners across widgets/cards
+showWidgetBorder = true
+
+# Type pairing: Inter (body) + Plus Jakarta Sans (headings) + JetBrains Mono (code).
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "'Plus Jakarta Sans':https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap"
+
+# Cohesive palette for any native charts (Plotly/Altair/Vega).
+chartCategoricalColors = ["#2DD4A8", "#E0A33E", "#5B8FF9", "#F1666E", "#A78BFA", "#FBBF24", "#34D399", "#94A3B8"]
+
+[theme.sidebar]
+backgroundColor = "#0E141B"
+secondaryBackgroundColor = "#141B24"
+borderColor = "#232E3A"

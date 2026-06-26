@@ -1,0 +1,27 @@
+# Secrets — never commit
+.env
+
+# Large raw / processed data (regenerate via the pipeline)
+data/raw/
+data/processed/
+
+# Model checkpoints (binary, regenerate via python -m src.train)
+checkpoints/
+
+# Ephemeral cached outputs
+outputs/live_sentiment.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.streamlit/secrets.toml
+.idea/
+.vscode/
