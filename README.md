@@ -1,4 +1,9 @@
 # Quantis — AI Financial Intelligence Platform
+<p align="center">
+  <a href="https://quantis-ai-financial-intelligence-platform.streamlit.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_Live_App-00E676?style=for-the-badge&logo=streamlit&logoColor=black" alt="Launch Quantis Platform" width="350">
+  </a>
+</p>
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org)
