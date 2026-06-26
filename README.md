@@ -3,7 +3,6 @@
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.58-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Quantis is a complete end-to-end deep learning system for next-day stock return forecasting. It trains LSTM and GRU models on 8 US equities, quantifies prediction uncertainty using Monte Carlo dropout, and delivers a live interactive dashboard that surfaces forecasts, news sentiment, risk metrics, and honest model transparency.
 
