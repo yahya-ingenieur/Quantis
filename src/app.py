@@ -18,6 +18,12 @@ Run:
 
 from __future__ import annotations
 
+import sys
+import os
+# Ensure the repo root is in sys.path so `from src.xxx import` works on
+# Streamlit Cloud (which runs the file directly, not from the project root).
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import json
 from math import exp
 
