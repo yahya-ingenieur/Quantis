@@ -34,7 +34,6 @@ import yfinance as yf
 # Configuration
 # --------------------------------------------------------------------------- #
 
-# The traded basket (pooled training across all of these).
 TICKERS = ["AAPL", "META", "MSFT", "TSLA", "AMZN", "XOM", "JNJ", "JPM"]
 
 # Shariah-compliance tagging.
@@ -56,8 +55,7 @@ SHARIAH_LABELS = {
 # younger than this (e.g. META ~2012, TSLA ~2010), which is fine for pooling.
 PERIOD = "10y"
 
-# Stable integer id per ticker so the pooled model can tell stocks apart
-# (cheap feature explicitly called for in the blueprint).
+# Stable integer id per ticker so the pooled model can tell stocks apart.
 TICKER_IDS = {ticker: idx for idx, ticker in enumerate(TICKERS)}
 
 # Paths resolved relative to the project root (parent of src/), so the module
@@ -164,8 +162,6 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Returns are built from Adj Close, so a missing Adj Close makes the row
-    # unusable. Drop it rather than fill it.
     df = df.dropna(subset=["Adj Close"])
 
     return df.reset_index(drop=True)
@@ -197,7 +193,6 @@ def add_features(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
     df["ticker_id"] = TICKER_IDS[ticker]
     df["shariah_status"] = SHARIAH_LABELS.get(ticker, "unclassified")
 
-    # Remove rows that can't be fully supervised (head: NaN return, tail: NaN target).
     df = df.dropna(subset=["log_return", "target"]).reset_index(drop=True)
 
     return df
@@ -230,7 +225,6 @@ def build_dataset(tickers: list[str] = TICKERS) -> pd.DataFrame:
 
 
 def save_processed(df: pd.DataFrame, name: str = "dataset.csv") -> Path:
-    """Write the combined dataset to data/processed/{name}."""
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     path = PROCESSED_DIR / name
     df.to_csv(path, index=False)
@@ -238,7 +232,6 @@ def save_processed(df: pd.DataFrame, name: str = "dataset.csv") -> Path:
 
 
 def _summarise(df: pd.DataFrame) -> None:
-    """Print a short human-readable summary of the built dataset."""
     print("\nDataset summary")
     print("-" * 40)
     print(f"total rows : {len(df)}")

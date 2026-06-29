@@ -91,7 +91,6 @@ def plot_gradient_clipping(hist: dict) -> None:
     ax1.legend()
     ax1.grid(alpha=0.25)
 
-    # Clip activity: fraction of steps actually clipped + max grad norm per epoch.
     frac = np.array(wc["grad_clip_frac"]) * 100
     ax2.bar(epochs, frac, color=ACCENT, alpha=0.85, label="% of steps clipped")
     ax2.set_xlabel("Epoch")

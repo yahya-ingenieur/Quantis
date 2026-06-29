@@ -52,7 +52,6 @@ def run() -> dict:
         all_upper[i : i + BATCH] = hi.numpy()
         print(f"  batch {i // BATCH + 1}/{(n + BATCH - 1) // BATCH} done", flush=True)
 
-    # Empirical coverage: fraction of true values inside [lower, upper]
     inside = (y >= all_lower) & (y <= all_upper)
     coverage = float(inside.mean())
     widths = all_upper - all_lower

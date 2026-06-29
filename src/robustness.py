@@ -84,7 +84,7 @@ def main() -> None:
         agg[key] = {"rmse_mean": float(np.mean(rmses)), "rmse_std": float(np.std(rmses)),
                     "dir_mean": float(np.mean(dirs)), "dir_std": float(np.std(dirs))}
 
-    # Baseline RMSE (fixed, for reference lines).
+    # for reference lines in the plot
     z = np.load(WINDOWS_PATH, allow_pickle=True)
     yb = z["y_test"].astype(float)
     base = {"persistence": float(np.sqrt(np.mean((yb - z["persistence_test_pred"]) ** 2))),
@@ -96,7 +96,6 @@ def main() -> None:
     with open(RESULTS_PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
-    # Plot: box plots of RMSE and directional accuracy across seeds.
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.boxplot([[r["rmse"] for r in per_seed["LSTM"]],
                  [r["rmse"] for r in per_seed["GRU"]]])

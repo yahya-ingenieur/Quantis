@@ -59,7 +59,6 @@ def run() -> dict:
         chunk = g.iloc[val_end:].reset_index(drop=True)
         cn = len(chunk)
 
-        # Full-series rolling mean & std of log_return
         rolling_mean = g["log_return"].rolling(ROLLING_WINDOW).mean()
         rolling_std  = g["log_return"].rolling(ROLLING_WINDOW).std()
         date_to_idx  = {d: i for i, d in enumerate(g["Date"])}

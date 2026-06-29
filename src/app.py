@@ -8,9 +8,10 @@ uncertainty range), and an honest "Model Transparency" card sourced from the
 evaluation JSON. Jargon terms carry plain-language popovers so the page stays
 readable for someone with zero ML or finance background.
 
-Under the hood it only LOADS local artifacts — checkpoints, processed data, and
-evaluation_results.json — and runs MC-dropout inference on the latest available
-window. It never retrains and makes no network calls.
+Under the hood it loads local artifacts (checkpoints, processed data,
+evaluation_results.json) and runs MC-dropout inference on the latest available
+window. It never retrains. Live prices are fetched from yfinance on demand
+with a frozen test-set snapshot as fallback.
 
 Run:
     streamlit run src/app.py
