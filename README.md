@@ -74,7 +74,7 @@ Input window (10 days × 2 features)
 
 Input features: **log-return** and **Volume** (the minimal informative set — anything more risks spurious correlation on small data).
 
-The lookback window of 10 trading days was selected through a hyperparameter search over `{5, 10, 20}`. The model sees:
+The lookback window of 10 trading days was selected through a joint hyperparameter search over three configurations (varying window, hidden size, and dropout together). The model sees:
 
 ```
 X[t] = StandardScaler( [log_return, Volume] )_{t-9 : t}   shape: (10, 2)
@@ -85,15 +85,15 @@ The scaler is fit **only on the training portion** of each ticker's data and app
 
 ### Hyperparameter Search
 
-Three configurations were explored per-model:
+Three joint configurations were explored (window, hidden size, and dropout varied together):
 
-| Config | Hidden size | Dropout | LR |
-|--------|-------------|---------|-----|
-| A | 64 | 0.2 | 1e-3 |
-| B | 128 | 0.3 | 1e-3 |
-| C | 128 | 0.4 | 5e-4 |
+| Config | Window | Hidden size | Dropout | LR | Best val loss |
+|--------|--------|-------------|---------|-----|---------------|
+| 0 | 20 | 64 | 0.2 | 1e-3 | 3.766e-4 |
+| 1 | 30 | 64 | 0.2 | 1e-3 | 3.689e-4 |
+| **2 (winner)** | **10** | **128** | **0.3** | **1e-3** | **3.663e-4** |
 
-**Winner:** Config B (hidden=128, dropout=0.3, lr=1e-3). Selected by lowest validation loss across the three choices — no test-set information used in this selection.
+**Winner:** Config 2 (window=10, hidden=128, dropout=0.3, lr=1e-3). Selected by lowest validation loss — no test-set information used in this selection.
 
 ---
 
@@ -105,7 +105,7 @@ Three configurations were explored per-model:
 | Source | Yahoo Finance via yfinance (Adj Close, Volume) |
 | Frequency | Daily OHLCV |
 | Total rows | 20,096 (after cleaning) |
-| Date range | ~2013 – 2024 |
+| Date range | 2016-06-21 – 2026-06-17 |
 | Split | 70% train / 15% val / 15% test (chronological, no shuffle) |
 | Test windows per ticker | 367 |
 | Total test windows | 2,936 |
@@ -113,8 +113,9 @@ Three configurations were explored per-model:
 **Cleaning policy:** Rows with missing `Adj Close` are dropped entirely. No forward-fill, no interpolation, no synthetic gap-filling. The rationale: forward-filling fabricates artificial zero-return days, which would depress RMSE without corresponding to any real market information. The cost (slightly fewer training samples) is worth the integrity.
 
 **Shariah classification:**
-- Shariah-compliant: AAPL, META, MSFT, TSLA, AMZN, XOM, JNJ
+- Shariah-compliant: AAPL, META (per current DJIM US factsheet)
 - Conventional: JPM (financial sector, interest-based operations)
+- Unclassified: MSFT, TSLA, AMZN, XOM, JNJ (status not verified against a current screening methodology — labelled unclassified rather than asserting compliance we have not confirmed)
 
 ---
 
